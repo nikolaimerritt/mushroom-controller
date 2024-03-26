@@ -3,7 +3,7 @@
 SCD4x co2_sensor;
 LiquidCrystal_I2C lcd(0x27, 20, 4); 
 SHT31 temp_humidity_sensor;
-bool is_heater_on = false;
+bool is_heater_on = true;
 
 void clearLine(uint8_t lineNumber) {
   for (uint8_t c = 0; c < LINE_LENGTH; c++) {
