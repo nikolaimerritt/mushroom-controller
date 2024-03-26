@@ -1,7 +1,7 @@
 #include "main.h"
 
 SCD4x co2_sensor;
-LiquidCrystal_I2C lcd(0x27, 20, 4); 
+LiquidCrystal_I2C lcd(0x27, 20, 4);
 SHT31 temp_humidity_sensor;
 bool is_heater_on = true;
 
@@ -20,9 +20,8 @@ void PressButton(uint8_t pin) {
   delay(1000);
 }
 
-void setup()
-{
-  lcd.init(); 
+void setup() {
+  lcd.init();
   lcd.backlight();
 
   Wire.begin();
@@ -41,11 +40,10 @@ void setup()
   pinMode(ON_PIN, OUTPUT);
   pinMode(OFF_PIN, OUTPUT);
 
-  PressButton(OFF_PIN);
+  PressButton(ON_PIN);
 }
 
-void loop()
-{
+void loop() {
   temp_humidity_sensor.read(false);
   float temperature = temp_humidity_sensor.getTemperature();
   float humidity = temp_humidity_sensor.getHumidity();
@@ -60,9 +58,8 @@ void loop()
   lcd.print(temperature);
   lcd.print(" C");
 
-  if (co2_sensor.readMeasurement()) 
-  {
-    uint16_t const co2 = co2_sensor.getCO2();    
+  if (co2_sensor.readMeasurement()) {
+    uint16_t const co2 = co2_sensor.getCO2();
     clearLine(3);
     lcd.print("CO2:       ");
     lcd.print(co2);
