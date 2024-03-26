@@ -1,32 +1,19 @@
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
-#include "SparkFun_SCD4x_Arduino_Library.h" //Click here to get the library: http://librarymanager/All#SparkFun_SCD4x
-#include "SHT31.h"
+#include "main.h"
 
-#define on_pin 2
-#define off_pin 3
-
-bool is_fan_on = false;
-
-#define min_humidity 60
-#define max_humidity 68
-
-SCD4x co2Sensor;
-#define line_length 20
+SCD4x co2_sensor;
 LiquidCrystal_I2C lcd(0x27, 20, 4); 
-SHT31 sht;
+SHT31 temp_humidity_sensor;
+bool is_heater_on = false;
 
 void clearLine(uint8_t lineNumber) {
-  for (uint8_t c = 0; c < line_length; c++) {
+  for (uint8_t c = 0; c < LINE_LENGTH; c++) {
     lcd.setCursor(c, lineNumber);
     lcd.write(' ');
   }
   lcd.setCursor(0, lineNumber);
 }
 
-
-void PressButton(uint8_t pin)
-{
+void PressButton(uint8_t pin) {
   digitalWrite(pin, LOW);
   delay(100);
   digitalWrite(pin, HIGH);
@@ -35,64 +22,60 @@ void PressButton(uint8_t pin)
 
 void setup()
 {
-  lcd.init(); // initialize the lcd
+  lcd.init(); 
   lcd.backlight();
 
   Wire.begin();
-  Wire.setClock(100000);
+  Wire.setClock(WIRE_CLOCK);
 
-  sht.begin();
+  temp_humidity_sensor.begin();
 
-  co2Sensor.begin();
+  co2_sensor.begin();
 
   clearLine(0);
-  lcd.print("Fartuino 1660 Ti v2");
+  lcd.print("Fartuino 1660 Ti v3");
 
-  digitalWrite(on_pin, HIGH);
-  digitalWrite(off_pin, HIGH);
+  digitalWrite(ON_PIN, HIGH);
+  digitalWrite(OFF_PIN, HIGH);
 
-  pinMode(on_pin, OUTPUT);
-  pinMode(off_pin, OUTPUT);
+  pinMode(ON_PIN, OUTPUT);
+  pinMode(OFF_PIN, OUTPUT);
 
-  PressButton(off_pin);
-
+  PressButton(OFF_PIN);
 }
-
-
-
 
 void loop()
 {
-  if (co2Sensor.readMeasurement()) // readMeasurement will return true when fresh data is available
-  {
-    uint16_t const co2 = co2Sensor.getCO2();    
-    clearLine(3);
-    lcd.print("CO2: ");
-    lcd.print(co2);
-    lcd.print(" PPM");
-  }
-  sht.read(false);
-
-  clearLine(2);
-  lcd.print("Temp: ");
-  float temp = sht.getTemperature();
-  lcd.print(temp);
-  lcd.write('C');
-
+  temp_humidity_sensor.read(false);
+  float temperature = temp_humidity_sensor.getTemperature();
+  float humidity = temp_humidity_sensor.getHumidity();
 
   clearLine(1);
-  lcd.print("Humidity: ");
-  float humidity = sht.getHumidity();
+  lcd.print("Humidity:  ");
   lcd.print(humidity);
   lcd.write('%');
 
-  if (humidity > max_humidity && !is_fan_on) {
-      PressButton(on_pin);
-      is_fan_on = true;
-  } else if (humidity < min_humidity && is_fan_on) {
-    PressButton(off_pin);
-    is_fan_on = false;
+  clearLine(2);
+  lcd.print("Temp:      ");
+  lcd.print(temperature);
+  lcd.print(" C");
+
+  if (co2_sensor.readMeasurement()) 
+  {
+    uint16_t const co2 = co2_sensor.getCO2();    
+    clearLine(3);
+    lcd.print("CO2:       ");
+    lcd.print(co2);
+    lcd.print(" PPM");
   }
 
-  delay(300);
+  if (temperature > MAX_TEMP && is_heater_on) {
+    PressButton(OFF_PIN);
+    is_heater_on = false;
+  } else if (temperature < MIN_TEMP && !is_heater_on) {
+    PressButton(ON_PIN);
+    is_heater_on = true;
+  }
+
+  delay(5000);
 }
