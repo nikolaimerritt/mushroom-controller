@@ -17,7 +17,7 @@ void setup() {
     co2_sensor.begin();
 
     clearLine(0);
-    lcd.print("Fartuino 1660 Ti v3");
+    lcd.print("Fartuino 1660 Ti v4");
 
     digitalWrite(ON_PIN, HIGH);
     digitalWrite(OFF_PIN, HIGH);
@@ -31,8 +31,8 @@ void setup() {
 
 void loop() {
     temp_humidity_sensor.read(false);
-    float temperature = temp_humidity_sensor.getTemperature();
-    float humidity = temp_humidity_sensor.getHumidity();
+    float const temperature = temp_humidity_sensor.getTemperature();
+    float const humidity = temp_humidity_sensor.getHumidity();
 
     clearLine(1);
     lcd.print("Humidity:  ");
