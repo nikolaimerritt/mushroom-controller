@@ -15,4 +15,7 @@
 #define MAX_TEMP 23
 #define WIRE_CLOCK 100000
 
+void clearLine(uint8_t line_number);
+void PressButton(uint8_t pin);
+
 #endif

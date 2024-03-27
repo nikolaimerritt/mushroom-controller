@@ -5,21 +5,6 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 SHT31 temp_humidity_sensor;
 bool is_heater_on = true;
 
-void clearLine(uint8_t lineNumber) {
-    for (uint8_t c = 0; c < LINE_LENGTH; c++) {
-        lcd.setCursor(c, lineNumber);
-        lcd.write(' ');
-    }
-    lcd.setCursor(0, lineNumber);
-}
-
-void PressButton(uint8_t pin) {
-    digitalWrite(pin, LOW);
-    delay(100);
-    digitalWrite(pin, HIGH);
-    delay(1000);
-}
-
 void setup() {
     lcd.init();
     lcd.backlight();
@@ -41,6 +26,7 @@ void setup() {
     pinMode(OFF_PIN, OUTPUT);
 
     PressButton(ON_PIN);
+    delay(1000);
 }
 
 void loop() {
@@ -75,4 +61,18 @@ void loop() {
     }
 
     delay(5000);
+}
+
+void clearLine(uint8_t line_number) {
+    for (uint8_t c = 0; c < LINE_LENGTH; c++) {
+        lcd.setCursor(c, line_number);
+        lcd.write(' ');
+    }
+    lcd.setCursor(0, line_number);
+}
+
+void PressButton(uint8_t pin) {
+    digitalWrite(pin, LOW);
+    delay(500);
+    digitalWrite(pin, HIGH);
 }
