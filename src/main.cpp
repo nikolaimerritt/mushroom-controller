@@ -3,7 +3,7 @@
 SCD4x co2_sensor;
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 SHT31 temp_humidity_sensor;
-bool is_heater_on = true;
+bool is_heater_on;
 
 void setup() {
     lcd.init();
@@ -17,7 +17,7 @@ void setup() {
     co2_sensor.begin();
 
     clear_line(0);
-    lcd.print("Fartuino 1660 Ti v4");
+    lcd.print("Fartuino 1660 Ti v5");
 
     digitalWrite(ON_PIN, HIGH);
     digitalWrite(OFF_PIN, HIGH);
@@ -25,7 +25,7 @@ void setup() {
     pinMode(ON_PIN, OUTPUT);
     pinMode(OFF_PIN, OUTPUT);
 
-    press_button(ON_PIN);
+    turn_heater_on();
     delay(1000);
 }
 
@@ -53,11 +53,9 @@ void loop() {
     }
 
     if (temperature > MAX_TEMP && is_heater_on) {
-        press_button(OFF_PIN);
-        is_heater_on = false;
+        turn_heater_off();
     } else if (temperature < MIN_TEMP && !is_heater_on) {
-        press_button(ON_PIN);
-        is_heater_on = true;
+        turn_heater_on();
     }
 
     delay(5000);
@@ -69,6 +67,16 @@ void clear_line(uint8_t line_number) {
         lcd.write(' ');
     }
     lcd.setCursor(0, line_number);
+}
+
+void turn_heater_on() {
+    press_button(ON_PIN);
+    is_heater_on = true;
+}
+
+void turn_heater_off() {
+    press_button(OFF_PIN);
+    is_heater_on = false;
 }
 
 void press_button(uint8_t pin) {

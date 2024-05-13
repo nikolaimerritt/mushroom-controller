@@ -11,11 +11,13 @@
 
 #define LINE_LENGTH 20
 
-#define MIN_TEMP 20
+#define MIN_TEMP 21.5
 #define MAX_TEMP 23
 #define WIRE_CLOCK 100000
 
 void clear_line(uint8_t line_number);
+void turn_heater_on();
+void turn_heater_off();
 void press_button(uint8_t pin);
 
 #endif
