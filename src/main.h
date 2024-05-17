@@ -11,13 +11,22 @@
 
 #define LINE_LENGTH 20
 
-#define MIN_TEMP 21.5
+#define MIN_TEMP 22
 #define MAX_TEMP 23
 #define WIRE_CLOCK 100000
+
+#define ONE_HOUR_MS 3600000
+#define MEASUREMENT_INTERVAL_MS 7000
+
+void print_measurements();
+void toggle_heater();
+
+void(* reset_arduino) (void) = 0;
 
 void clear_line(uint8_t line_number);
 void turn_heater_on();
 void turn_heater_off();
 void press_button(uint8_t pin);
+
 
 #endif
